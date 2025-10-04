@@ -262,6 +262,7 @@ GameObject:
   - component: {fileID: 609741068}
   - component: {fileID: 609741067}
   - component: {fileID: 609741066}
+  - component: {fileID: 609741069}
   m_Layer: 5
   m_Name: S4Button
   m_TagString: Untagged
@@ -333,8 +334,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1051703043}
-        m_TargetAssemblyTypeName: CameraTeleport, Assembly-CSharp
+      - m_Target: {fileID: 609741069}
+        m_TargetAssemblyTypeName: ButtonHandler, Assembly-CSharp
         m_MethodName: OnButtonPressed
         m_Mode: 5
         m_Arguments:
@@ -342,7 +343,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: S4Button
+          m_StringArgument: S4Button1
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &609741067
@@ -383,6 +384,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 609741064}
   m_CullTransparentMesh: 1
+--- !u!114 &609741069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 609741064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fe8522d71dfc44b09c6b2a529e92739, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnButtonClicked:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &657767064
 GameObject:
   m_ObjectHideFlags: 0
@@ -395,6 +411,7 @@ GameObject:
   - component: {fileID: 657767068}
   - component: {fileID: 657767067}
   - component: {fileID: 657767066}
+  - component: {fileID: 657767069}
   m_Layer: 5
   m_Name: S3Button
   m_TagString: Untagged
@@ -466,8 +483,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1051703043}
-        m_TargetAssemblyTypeName: CameraTeleport, Assembly-CSharp
+      - m_Target: {fileID: 657767069}
+        m_TargetAssemblyTypeName: ButtonHandler, Assembly-CSharp
         m_MethodName: OnButtonPressed
         m_Mode: 5
         m_Arguments:
@@ -475,7 +492,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: S3Button
+          m_StringArgument: S3Button1
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &657767067
@@ -516,6 +533,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 657767064}
   m_CullTransparentMesh: 1
+--- !u!114 &657767069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 657767064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fe8522d71dfc44b09c6b2a529e92739, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnButtonClicked:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &670968282
 GameObject:
   m_ObjectHideFlags: 0
@@ -966,6 +998,7 @@ GameObject:
   - component: {fileID: 1238405513}
   - component: {fileID: 1238405512}
   - component: {fileID: 1238405511}
+  - component: {fileID: 1238405514}
   m_Layer: 5
   m_Name: S5Button
   m_TagString: Untagged
@@ -1037,8 +1070,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1051703043}
-        m_TargetAssemblyTypeName: CameraTeleport, Assembly-CSharp
+      - m_Target: {fileID: 1238405514}
+        m_TargetAssemblyTypeName: ButtonHandler, Assembly-CSharp
         m_MethodName: OnButtonPressed
         m_Mode: 5
         m_Arguments:
@@ -1046,7 +1079,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: S5Button
+          m_StringArgument: S5Button1
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1238405512
@@ -1087,6 +1120,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1238405509}
   m_CullTransparentMesh: 1
+--- !u!114 &1238405514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238405509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fe8522d71dfc44b09c6b2a529e92739, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnButtonClicked:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1320475384
 GameObject:
   m_ObjectHideFlags: 0
@@ -1553,6 +1601,7 @@ GameObject:
   - component: {fileID: 1663108174}
   - component: {fileID: 1663108173}
   - component: {fileID: 1663108172}
+  - component: {fileID: 1663108175}
   m_Layer: 5
   m_Name: S1Button
   m_TagString: Untagged
@@ -1624,8 +1673,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1051703043}
-        m_TargetAssemblyTypeName: CameraTeleport, Assembly-CSharp
+      - m_Target: {fileID: 1663108175}
+        m_TargetAssemblyTypeName: ButtonHandler, Assembly-CSharp
         m_MethodName: OnButtonPressed
         m_Mode: 5
         m_Arguments:
@@ -1674,6 +1723,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1663108170}
   m_CullTransparentMesh: 1
+--- !u!114 &1663108175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1663108170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fe8522d71dfc44b09c6b2a529e92739, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnButtonClicked:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1780830944
 GameObject:
   m_ObjectHideFlags: 0
@@ -2088,6 +2152,7 @@ GameObject:
   - component: {fileID: 2009090438}
   - component: {fileID: 2009090437}
   - component: {fileID: 2009090436}
+  - component: {fileID: 2009090439}
   m_Layer: 5
   m_Name: S2Button
   m_TagString: Untagged
@@ -2159,8 +2224,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1051703043}
-        m_TargetAssemblyTypeName: CameraTeleport, Assembly-CSharp
+      - m_Target: {fileID: 2009090439}
+        m_TargetAssemblyTypeName: ButtonHandler, Assembly-CSharp
         m_MethodName: OnButtonPressed
         m_Mode: 5
         m_Arguments:
@@ -2168,7 +2233,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: S2Button
+          m_StringArgument: S2Button1
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &2009090437
@@ -2209,6 +2274,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2009090434}
   m_CullTransparentMesh: 1
+--- !u!114 &2009090439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2009090434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fe8522d71dfc44b09c6b2a529e92739, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnButtonClicked:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
