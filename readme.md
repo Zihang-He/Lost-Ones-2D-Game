@@ -12,6 +12,7 @@ cd Lost-Ones-2D-Game
 git lfs install
 git lfs pull
 
+
 Assets/
 ├─ Scripts/ # 游戏逻辑脚本 (ActRunner.cs 等)
 ├─ Data/ # 剧情文件，例如 story.json
