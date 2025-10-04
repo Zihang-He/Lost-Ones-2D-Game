@@ -7,7 +7,7 @@
 
 ### 2. 克隆项目
 ```bash
-git clone [<repo-url>](https://github.com/Zihang-He/Lost-Ones-2D-Game.git)
+git clone https://github.com/Zihang-He/Lost-Ones-2D-Game.git
 cd Lost-Ones-2D-Game
 git lfs install
 git lfs pull
