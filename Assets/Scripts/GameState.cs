@@ -8,7 +8,7 @@ public class GameState : MonoBehaviour
 
     // Dictionary to track button presses for each scene
     private Dictionary<int, List<string>> sceneButtonPresses = new Dictionary<int, List<string>>();
-
+    private Dictionary<int, HashSet<string>> sceneSuccessfulDrops = new Dictionary<int, HashSet<string>>();
     void Awake()
     {
         // Ensure only one instance of GameState exists
@@ -46,5 +46,26 @@ public class GameState : MonoBehaviour
             return sceneButtonPresses[sceneIndex];
         }
         return new List<string>();
+    }
+    
+    // Mark a successful drop for a specific scene
+    public void MarkSuccessfulDrop(int sceneIndex, string itemName)
+    {
+        if (!sceneSuccessfulDrops.ContainsKey(sceneIndex))
+        {
+            sceneSuccessfulDrops[sceneIndex] = new HashSet<string>();
+        }
+
+        if (!sceneSuccessfulDrops[sceneIndex].Contains(itemName))
+        {
+            sceneSuccessfulDrops[sceneIndex].Add(itemName);
+            Debug.Log($"Item '{itemName}' successfully dropped in Scene {sceneIndex}");
+        }
+    }
+
+    // Check if an item has been successfully dropped
+    public bool IsItemSuccessfullyDropped(int sceneIndex, string itemName)
+    {
+        return sceneSuccessfulDrops.ContainsKey(sceneIndex) && sceneSuccessfulDrops[sceneIndex].Contains(itemName);
     }
 }

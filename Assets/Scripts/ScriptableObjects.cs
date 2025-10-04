@@ -1,4 +1,3 @@
-// filepath: /Users/hezihang/Desktop/college/grad/CSE218/My project/Assets/Scripts/DraggableItemConfig.cs
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "DraggableItemConfig", menuName = "Game/DraggableItemConfig")]
@@ -8,8 +7,8 @@ public class DraggableItemConfig : ScriptableObject
     public class ItemZonePair
     {
         public string itemName; // Name of the draggable item
-        public Transform itemTransform; // Reference to the draggable item's transform
-        public Transform correctZoneTransform; // Reference to the correct drop zone's transform
+        public string zoneName; // Name of the correct drop zone
+        public Vector3 initialPosition; // Initial position of the draggable item
     }
 
     public ItemZonePair[] itemZonePairs; // Array of item-zone mappings
