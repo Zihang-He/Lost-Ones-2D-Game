@@ -206,6 +206,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &542828992
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 542828994}
+  - component: {fileID: 542828993}
+  m_Layer: 0
+  m_Name: GameStateManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &542828993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 542828992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e38263e01be64886b8f635ccbb8c332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &542828994
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 542828992}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.7441738, y: 1.1863861, z: -0.17496641}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &609741064
 GameObject:
   m_ObjectHideFlags: 0
@@ -291,14 +335,14 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1051703043}
         m_TargetAssemblyTypeName: CameraTeleport, Assembly-CSharp
-        m_MethodName: StartSceneTransition
-        m_Mode: 1
+        m_MethodName: OnButtonPressed
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: S4Button
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &609741067
@@ -424,14 +468,14 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1051703043}
         m_TargetAssemblyTypeName: CameraTeleport, Assembly-CSharp
-        m_MethodName: StartSceneTransition
-        m_Mode: 1
+        m_MethodName: OnButtonPressed
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: S3Button
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &657767067
@@ -995,14 +1039,14 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1051703043}
         m_TargetAssemblyTypeName: CameraTeleport, Assembly-CSharp
-        m_MethodName: StartSceneTransition
-        m_Mode: 1
+        m_MethodName: OnButtonPressed
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: S5Button
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1238405512
@@ -1582,14 +1626,14 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1051703043}
         m_TargetAssemblyTypeName: CameraTeleport, Assembly-CSharp
-        m_MethodName: StartSceneTransition
-        m_Mode: 1
+        m_MethodName: OnButtonPressed
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: S1Button1
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1663108173
@@ -2117,14 +2161,14 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1051703043}
         m_TargetAssemblyTypeName: CameraTeleport, Assembly-CSharp
-        m_MethodName: StartSceneTransition
-        m_Mode: 1
+        m_MethodName: OnButtonPressed
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: S2Button
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &2009090437
@@ -2177,3 +2221,4 @@ SceneRoots:
   - {fileID: 1517229274}
   - {fileID: 1320475387}
   - {fileID: 670968286}
+  - {fileID: 542828994}

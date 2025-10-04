@@ -35,15 +35,24 @@ public class CameraTeleport : MonoBehaviour
         }
 
         // Trigger teleportation and zooming with space key (for testing)
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            StartSceneTransition();
-        }
+        // if (Input.GetKeyDown(KeyCode.Space))
+        // {
+        //     StartSceneTransition();
+        // }
     }
 
     // Start the scene transition
     public void StartSceneTransition()
     {
+        StartCoroutine(SceneTransition());
+    }
+    public void OnButtonPressed(string buttonName)
+    {
+        // Record the button press in the GameState
+        GameState.Instance.RecordButtonPress(currentSceneIndex, buttonName);
+
+        // Start the scene transition
+        // StartSceneTransition();
         StartCoroutine(SceneTransition());
     }
 
