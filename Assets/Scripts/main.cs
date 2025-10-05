@@ -131,6 +131,14 @@ public class main : MonoBehaviour
             moveObj.OnMoveFinished += () => OnMoveObjectFinished(moveObj);
         }
     }
+
+		// Ensure visual effects and music start in neutral state
+		DisableHighContrast();
+		DisableGrayscale();
+		// if (BackgroundMusic.Instance != null)
+		// {
+		// 	BackgroundMusic.Instance.SwitchToNormal();
+		// }
 	}
 
 	// 按钮点击统一入口（buttonName 推荐形如：S1_ButtonA 或 S2:Lever01）
@@ -140,6 +148,14 @@ public class main : MonoBehaviour
 		string sceneCode = ParseSceneCode(message);
 		if (string.IsNullOrEmpty(sceneCode)) return;
         Debug.Log("button triggered: " + message);
+
+        if (message == "S3Button3"){
+            if (BackgroundMusic.Instance != null)
+                {
+                    BackgroundMusic.Instance.SwitchToNormal();
+                }
+        }
+        
 		// 事件视觉反馈：按钮点击
 		if (ShouldEnableGrayscale(message)) EnableGrayscale();
 		if (ShouldDisableGrayscale(message)) DisableGrayscale();
@@ -233,14 +249,14 @@ public class main : MonoBehaviour
 	bool ShouldEnableGrayscale(string eventId)
 	{
 		// 根据需求开启灰度：匹配 S1Item2 或 S2Button3 等
-        Debug.Log("eventId: " + eventId + ' ' + eventId == "S1Item2" || eventId == "S2Button3");
-		return eventId == "S1Item2" || eventId == "S2Button3";
+        Debug.Log("eventId: " + eventId + ' ' + eventId == "S1Item2");
+		return eventId == "S3Button2";
 	}
 
 	bool ShouldDisableGrayscale(string eventId)
 	{
 		// 当 S2Button1 触发或其他自定义事件则关闭
-		return eventId == "S2Button1";
+		return eventId == "S3Button3";
 	}
 
 // 	bool ShouldEnableOverlay(string eventId)
@@ -251,6 +267,7 @@ public class main : MonoBehaviour
 
 	void EnableGrayscale()
 	{
+        DisableHighContrast();
 		if (grayscaleEffect != null)
 		{
 			grayscaleEffect.SetEnabled(true, grayscaleDesaturationOn, grayscaleContrastOn);
@@ -268,20 +285,26 @@ public class main : MonoBehaviour
 	bool ShouldEnableHighContrast(string eventId)
 	{
 		// 示例：为特定按钮/物品开启高对比
-		return eventId == "S2Button2" || eventId == "S4Item1";
+		return eventId == "S3Button1";
 	}
 
 	bool ShouldDisableHighContrast(string eventId)
 	{
 		// 示例：某事件关闭高对比
-		return eventId == "S2Button1";
+		return eventId == "S3Button3";
 	}
 
 	void EnableHighContrast()
 	{
+        DisableGrayscale();
 		if (highContrastEffect != null)
 		{
 			highContrastEffect.SetEnabled(true, highContrastOn, highContrastBrightnessOn);
+		}
+		// Switch to mania music when high contrast is enabled
+		if (BackgroundMusic.Instance != null)
+		{
+			BackgroundMusic.Instance.SwitchToMania();
 		}
 	}
 
@@ -291,6 +314,11 @@ public class main : MonoBehaviour
 		{
 			highContrastEffect.SetEnabled(false, 1f, 0f);
 		}
+		// Switch back to normal music when high contrast is disabled
+		// if (BackgroundMusic.Instance != null)
+		// {
+		// 	BackgroundMusic.Instance.SwitchToNormal();
+		// }
 	}
 
 	// 提取消息中的幕编号：支持 "S1_xxx"、"S2:xxx"、"S3 xxx"
