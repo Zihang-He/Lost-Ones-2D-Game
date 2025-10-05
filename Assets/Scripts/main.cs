@@ -71,9 +71,14 @@ public class main : MonoBehaviour
 
 	[Header("灰度特效（相机上）")]
 	public ScreenGrayscaleEffect grayscaleEffect;
-	[Range(0f,1f)] public float grayscaleDesaturationOn = 0.85f;
-	[Range(0.5f,2f)] public float grayscaleContrastOn = 1.2f;
+	[Range(0f,1f)] public float grayscaleDesaturationOn = 1.0f;
+	[Range(0.5f,2f)] public float grayscaleContrastOn = 1.0f;
 	public float filterFadeDuration = 0.15f;
+
+	[Header("高对比特效（相机上）")]
+	public ScreenHighContrastEffect highContrastEffect;
+	[Range(0.5f,3f)] public float highContrastOn = 1.6f;
+	[Range(-1f,1f)] public float highContrastBrightnessOn = 0f;
 
 	// 每幕已完成的按钮与拖拽统计
 	private readonly Dictionary<string, HashSet<string>> clickedButtonsByScene = new Dictionary<string, HashSet<string>>();
@@ -124,6 +129,8 @@ public class main : MonoBehaviour
 		// 事件视觉反馈：按钮点击
 		if (ShouldEnableGrayscale(message)) EnableGrayscale();
 		if (ShouldDisableGrayscale(message)) DisableGrayscale();
+		if (ShouldEnableHighContrast(message)) EnableHighContrast();
+		if (ShouldDisableHighContrast(message)) DisableHighContrast();
 		// // if (screenFilter != null && ShouldEnableOverlay(message)) screenFilter.ApplyOverlay(filterOnEventColor, filterFadeDuration);
 
 		if (!clickedButtonsByScene.ContainsKey(sceneCode))
@@ -146,6 +153,8 @@ public class main : MonoBehaviour
         Debug.Log("itemName: " + itemName);
 		if (ShouldEnableGrayscale(itemName)) EnableGrayscale();
 		if (ShouldDisableGrayscale(itemName)) DisableGrayscale();
+		if (ShouldEnableHighContrast(itemName)) EnableHighContrast();
+		if (ShouldDisableHighContrast(itemName)) DisableHighContrast();
 		// // if (screenFilter != null && ShouldEnableOverlay(itemName)) screenFilter.ApplyOverlay(filterOnEventColor, filterFadeDuration);
 
 		if (!droppedItemsByScene.ContainsKey(sceneCode))
@@ -177,8 +186,9 @@ public class main : MonoBehaviour
 			if (cameraTeleport != null)
 			{
 				Debug.Log("触发转场");
-				// 场景切换时关闭灰度与覆盖
+				// 场景切换时关闭特效与覆盖
 				DisableGrayscale();
+				DisableHighContrast();
 				if (screenFilter != null) screenFilter.ClearOverlay(filterFadeDuration);
 				cameraTeleport.StartSceneTransition();
 			}
@@ -217,6 +227,34 @@ public class main : MonoBehaviour
 		if (grayscaleEffect != null)
 		{
 			grayscaleEffect.SetEnabled(false, 0f);
+		}
+	}
+
+	bool ShouldEnableHighContrast(string eventId)
+	{
+		// 示例：为特定按钮/物品开启高对比
+		return eventId == "S2Button2" || eventId == "S4Item1";
+	}
+
+	bool ShouldDisableHighContrast(string eventId)
+	{
+		// 示例：某事件关闭高对比
+		return eventId == "S2Button1";
+	}
+
+	void EnableHighContrast()
+	{
+		if (highContrastEffect != null)
+		{
+			highContrastEffect.SetEnabled(true, highContrastOn, highContrastBrightnessOn);
+		}
+	}
+
+	void DisableHighContrast()
+	{
+		if (highContrastEffect != null)
+		{
+			highContrastEffect.SetEnabled(false, 1f, 0f);
 		}
 	}
 
