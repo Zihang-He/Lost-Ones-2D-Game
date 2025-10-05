@@ -45,12 +45,13 @@ using System.Text.RegularExpressions; // 用于正则解析
 
 public class main : MonoBehaviour
 {
-	[System.Serializable]
-	public class SceneRequirement
-	{
-		public string sceneCode = "S1"; // 形如 S1/S2/S3
-		public int requiredButtons = 0; // 该幕需要点击的按钮总数
-		public int requiredDrops = 0;   // 该幕需要正确放置的物品总数
+    [System.Serializable]
+    public class SceneRequirement
+    {
+        public string sceneCode = "S1"; // 形如 S1/S2/S3
+        public int requiredButtons = 0; // 该幕需要点击的按钮总数
+        public int requiredDrops = 0;   // 该幕需要正确放置的物品总数
+        public int requiredMoves = 0;        // 该幕需要完成移动的对象总数
 	}
 
 	[Header("按钮集合")]
@@ -66,7 +67,7 @@ public class main : MonoBehaviour
 	public CameraTeleport cameraTeleport;
 
 	[Header("屏幕滤镜")]
-	public ScreenFilterController screenFilter;
+	// public ScreenFilterController screenFilter;
 	public Color filterOnEventColor = new Color(0f, 0f, 0f, 0.35f);
 
 	[Header("灰度特效（相机上）")]
@@ -80,43 +81,56 @@ public class main : MonoBehaviour
 	[Range(0.5f,3f)] public float highContrastOn = 1.6f;
 	[Range(-1f,1f)] public float highContrastBrightnessOn = 0f;
 
+    [Header("可移动对象集合")]
+    public MoveObject[] movableObjects;
+
+    
+
 	// 每幕已完成的按钮与拖拽统计
-	private readonly Dictionary<string, HashSet<string>> clickedButtonsByScene = new Dictionary<string, HashSet<string>>();
+    private readonly Dictionary<string, HashSet<string>> clickedButtonsByScene = new Dictionary<string, HashSet<string>>();
 	private readonly Dictionary<string, HashSet<string>> droppedItemsByScene = new Dictionary<string, HashSet<string>>();
 	private readonly HashSet<string> sceneAlreadyCompleted = new HashSet<string>();
+    private readonly Dictionary<string, HashSet<string>> movedObjectsByScene = new Dictionary<string, HashSet<string>>();
 
 	private Dictionary<string, SceneRequirement> requirementByScene;
 
-	void Start()
-	{
-		// 建立查找表
-		requirementByScene = new Dictionary<string, SceneRequirement>();
-		foreach (var r in sceneRequirements)
-		{
-			if (!string.IsNullOrEmpty(r.sceneCode) && !requirementByScene.ContainsKey(r.sceneCode))
-			{
-				requirementByScene.Add(r.sceneCode, r);
-			}
-		}
+    void Start()
+    {
+        // 建立查找表
+        requirementByScene = new Dictionary<string, SceneRequirement>();
+        foreach (var r in sceneRequirements)
+        {
+            if (!string.IsNullOrEmpty(r.sceneCode) && !requirementByScene.ContainsKey(r.sceneCode))
+            {
+                requirementByScene.Add(r.sceneCode, r);
+            }
+        }
 
-		// 绑定按钮事件
-		if (buttons != null)
-		{
-			foreach (var button in buttons)
-			{
-				button.OnButtonClicked.AddListener(OnAnyButtonClicked);
-			}
-		}
+        // 绑定按钮事件
+        if (buttons != null)
+        {
+            foreach (var button in buttons)
+            {
+                button.OnButtonClicked.AddListener(OnAnyButtonClicked);
+            }
+        }
 
-		// 绑定拖拽完成事件（带上对应物品的 sceneIndex）
-		if (draggableItems != null)
-		{
-			foreach (var item in draggableItems)
-			{
-				var capturedItem = item; // 捕获当前引用
-				capturedItem.OnItemDropped.AddListener((itemName) => OnAnyItemDropped(capturedItem.sceneIndex, itemName));
-			}
-		}
+        // 绑定拖拽完成事件（带上对应物品的 sceneIndex）
+        if (draggableItems != null)
+        {
+            foreach (var item in draggableItems)
+            {
+                var capturedItem = item; // 捕获当前引用
+                capturedItem.OnItemDropped.AddListener((itemName) => OnAnyItemDropped(capturedItem.sceneIndex, itemName));
+            }
+        }
+        if (movableObjects != null)
+    {
+        foreach (var moveObj in movableObjects)
+        {
+            moveObj.OnMoveFinished += () => OnMoveObjectFinished(moveObj);
+        }
+    }
 	}
 
 	// 按钮点击统一入口（buttonName 推荐形如：S1_ButtonA 或 S2:Lever01）
@@ -165,21 +179,42 @@ public class main : MonoBehaviour
 
 		TryCompleteScene(sceneCode);
 	}
+    void OnMoveObjectFinished(MoveObject moveObj)
+    {
+        if (moveObj == null) return;
+
+        string message = moveObj.gameObject.name; // 或 MoveObject 内可加自定义名字字段
+        string sceneCode = ParseSceneCode(message);
+        if (string.IsNullOrEmpty(sceneCode)) return;
+
+        if (!movedObjectsByScene.ContainsKey(sceneCode))
+        {
+            movedObjectsByScene[sceneCode] = new HashSet<string>();
+        }
+        movedObjectsByScene[sceneCode].Add(message);
+
+        Debug.Log($"[{sceneCode}] MoveObject {message} 完成移动");
+
+        // 尝试判定幕完成
+        TryCompleteScene(sceneCode);
+    }
 
 	// 判断该幕是否达成要求，如达成则触发转场
-	void TryCompleteScene(string sceneCode)
-	{
-		if (sceneAlreadyCompleted.Contains(sceneCode)) return;
-		if (requirementByScene == null || !requirementByScene.ContainsKey(sceneCode)) return;
+    void TryCompleteScene(string sceneCode)
+    {
+        if (sceneAlreadyCompleted.Contains(sceneCode)) return;
+        if (requirementByScene == null || !requirementByScene.ContainsKey(sceneCode)) return;
 
-		var req = requirementByScene[sceneCode];
-		int doneButtons = clickedButtonsByScene.ContainsKey(sceneCode) ? clickedButtonsByScene[sceneCode].Count : 0;
-		int doneDrops = droppedItemsByScene.ContainsKey(sceneCode) ? droppedItemsByScene[sceneCode].Count : 0;
+        var req = requirementByScene[sceneCode];
+        int doneButtons = clickedButtonsByScene.ContainsKey(sceneCode) ? clickedButtonsByScene[sceneCode].Count : 0;
+        int doneDrops = droppedItemsByScene.ContainsKey(sceneCode) ? droppedItemsByScene[sceneCode].Count : 0;
+        int doneMoves = movedObjectsByScene.ContainsKey(sceneCode) ? movedObjectsByScene[sceneCode].Count : 0;
 
-		bool buttonsOk = req.requiredButtons <= 0 || doneButtons >= req.requiredButtons;
-		bool dropsOk = req.requiredDrops <= 0 || doneDrops >= req.requiredDrops;
+        bool buttonsOk = req.requiredButtons <= 0 || doneButtons >= req.requiredButtons;
+        bool dropsOk = req.requiredDrops <= 0 || doneDrops >= req.requiredDrops;
+        bool movesOk = req.requiredMoves <= 0 || doneMoves >= req.requiredMoves;
 
-		if (buttonsOk && dropsOk)
+		if (buttonsOk && dropsOk && movesOk)
 		{
 			sceneAlreadyCompleted.Add(sceneCode);
 			Debug.Log($"[{sceneCode}] 所有条件已满足（按钮 {doneButtons}/{req.requiredButtons}，物品 {doneDrops}/{req.requiredDrops}），触发转场。");
@@ -189,7 +224,7 @@ public class main : MonoBehaviour
 				// 场景切换时关闭特效与覆盖
 				DisableGrayscale();
 				DisableHighContrast();
-				if (screenFilter != null) screenFilter.ClearOverlay(filterFadeDuration);
+				// if (screenFilter != null) screenFilter.ClearOverlay(filterFadeDuration);
 				cameraTeleport.StartSceneTransition();
 			}
 		}
