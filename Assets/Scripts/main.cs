@@ -45,118 +45,134 @@ using System.Text.RegularExpressions; // 用于正则解析
 
 public class main : MonoBehaviour
 {
-    [Header("按钮集合")]
-    public ButtonHandler[] buttons;
+	[System.Serializable]
+	public class SceneRequirement
+	{
+		public string sceneCode = "S1"; // 形如 S1/S2/S3
+		public int requiredButtons = 0; // 该幕需要点击的按钮总数
+		public int requiredDrops = 0;   // 该幕需要正确放置的物品总数
+	}
 
-    [Header("镜头脚本")]
-    public CameraTeleport cameraTeleport;
+	[Header("按钮集合")]
+	public ButtonHandler[] buttons;
 
-    private HashSet<string> clickedButtons = new HashSet<string>();
+	[Header("可拖拽物集合")]
+	public DraggableItem[] draggableItems;
 
-    void Start()
-    {
-        // 绑定所有按钮的全局监听
-        foreach (var button in buttons)
-        {
-            button.OnButtonClicked.AddListener(OnAnyButtonClicked);
-        }
-    }
+	[Header("各幕过关条件（按钮数 & 拖拽物数）")]
+	public SceneRequirement[] sceneRequirements;
 
-    void OnAnyButtonClicked(string message)
-    {
-        Debug.Log($"[Main] 收到按钮事件：{message}");
+	[Header("镜头脚本")]
+	public CameraTeleport cameraTeleport;
 
-        if (string.IsNullOrEmpty(message))
-        {
-            Debug.LogWarning("空的按钮名称，忽略。");
-            return;
-        }
+	// 每幕已完成的按钮与拖拽统计
+	private readonly Dictionary<string, HashSet<string>> clickedButtonsByScene = new Dictionary<string, HashSet<string>>();
+	private readonly Dictionary<string, HashSet<string>> droppedItemsByScene = new Dictionary<string, HashSet<string>>();
+	private readonly HashSet<string> sceneAlreadyCompleted = new HashSet<string>();
 
-        // 解析幕编号
-        string actCode = ParseSceneCode(message);
+	private Dictionary<string, SceneRequirement> requirementByScene;
 
-        if (string.IsNullOrEmpty(actCode))
-        {
-            Debug.LogWarning($"未能识别幕编号（message={message}）");
-            return;
-        }
+	void Start()
+	{
+		// 建立查找表
+		requirementByScene = new Dictionary<string, SceneRequirement>();
+		foreach (var r in sceneRequirements)
+		{
+			if (!string.IsNullOrEmpty(r.sceneCode) && !requirementByScene.ContainsKey(r.sceneCode))
+			{
+				requirementByScene.Add(r.sceneCode, r);
+			}
+		}
 
-        // 根据幕编号执行不同逻辑
-        switch (actCode)
-        {
-            case "S1":
-                HandleAct1(message);
-                break;
+		// 绑定按钮事件
+		if (buttons != null)
+		{
+			foreach (var button in buttons)
+			{
+				button.OnButtonClicked.AddListener(OnAnyButtonClicked);
+			}
+		}
 
-            case "S2":
-                HandleAct2(message);
-                break;
+		// 绑定拖拽完成事件（带上对应物品的 sceneIndex）
+		if (draggableItems != null)
+		{
+			foreach (var item in draggableItems)
+			{
+				var capturedItem = item; // 捕获当前引用
+				capturedItem.OnItemDropped.AddListener((itemName) => OnAnyItemDropped(capturedItem.sceneIndex, itemName));
+			}
+		}
+	}
 
-            case "S3":
-                HandleAct3(message);
-                break;
+	// 按钮点击统一入口（buttonName 推荐形如：S1_ButtonA 或 S2:Lever01）
+	void OnAnyButtonClicked(string message)
+	{
+		if (string.IsNullOrEmpty(message)) return;
+		string sceneCode = ParseSceneCode(message);
+		if (string.IsNullOrEmpty(sceneCode)) return;
 
-            case "S4":
-                HandleAct4(message);
-                break;
+		if (!clickedButtonsByScene.ContainsKey(sceneCode))
+		{
+			clickedButtonsByScene[sceneCode] = new HashSet<string>();
+		}
+		clickedButtonsByScene[sceneCode].Add(message);
 
-            case "S5":
-                HandleAct5(message);
-                break;
+		TryCompleteScene(sceneCode);
+	}
 
-            default:
-                Debug.LogWarning($"未识别的幕编号: {actCode}");
-                break;
-        }
-    }
+	// 拖拽物放置统一入口
+	void OnAnyItemDropped(int sceneIndex, string itemName)
+	{
+		string sceneCode = IndexToSceneCode(sceneIndex);
+		if (string.IsNullOrEmpty(sceneCode)) return;
+		if (string.IsNullOrEmpty(itemName)) return;
 
-    // ✅ 用正则提取幕编号（如 S1、S2、S3...）
-    string ParseSceneCode(string message)
-    {
-        Match match = Regex.Match(message, @"^(S\d+)");
-        if (match.Success)
-            return match.Groups[1].Value; // 返回 S1, S2, ...
-        return null;
-    }
+		if (!droppedItemsByScene.ContainsKey(sceneCode))
+		{
+			droppedItemsByScene[sceneCode] = new HashSet<string>();
+		}
+		droppedItemsByScene[sceneCode].Add(itemName);
 
-    // ======================
-    // 各幕逻辑分发函数
-    // ======================
+		TryCompleteScene(sceneCode);
+	}
 
-    void HandleAct1(string message)
-    {
-        Debug.Log($"[Act1] 收到事件：{message}");
-        clickedButtons.Add(message);
+	// 判断该幕是否达成要求，如达成则触发转场
+	void TryCompleteScene(string sceneCode)
+	{
+		if (sceneAlreadyCompleted.Contains(sceneCode)) return;
+		if (requirementByScene == null || !requirementByScene.ContainsKey(sceneCode)) return;
 
-        if (clickedButtons.Count >= buttons.Length)
-        {
-            Debug.Log("[Act1] 所有按钮已点击，触发转场");
-            cameraTeleport.StartSceneTransition();
-            clickedButtons.Clear();
-        }
-    }
+		var req = requirementByScene[sceneCode];
+		int doneButtons = clickedButtonsByScene.ContainsKey(sceneCode) ? clickedButtonsByScene[sceneCode].Count : 0;
+		int doneDrops = droppedItemsByScene.ContainsKey(sceneCode) ? droppedItemsByScene[sceneCode].Count : 0;
 
-    void HandleAct2(string message)
-    {
-        Debug.Log($"[Act2] 收到事件：{message}");
-        // TODO: 第二幕逻辑
-    }
+		bool buttonsOk = req.requiredButtons <= 0 || doneButtons >= req.requiredButtons;
+		bool dropsOk = req.requiredDrops <= 0 || doneDrops >= req.requiredDrops;
 
-    void HandleAct3(string message)
-    {
-        Debug.Log($"[Act3] 收到事件：{message}");
-        // TODO: 第三幕逻辑
-    }
+		if (buttonsOk && dropsOk)
+		{
+			sceneAlreadyCompleted.Add(sceneCode);
+			Debug.Log($"[{sceneCode}] 所有条件已满足（按钮 {doneButtons}/{req.requiredButtons}，物品 {doneDrops}/{req.requiredDrops}），触发转场。");
+			if (cameraTeleport != null)
+			{
+                Debug.Log("触发转场");
+				cameraTeleport.StartSceneTransition();
+			}
+		}
+	}
 
-    void HandleAct4(string message)
-    {
-        Debug.Log($"[Act4] 收到事件：{message}");
-        // TODO: 第四幕逻辑
-    }
+	// 提取消息中的幕编号：支持 "S1_xxx"、"S2:xxx"、"S3 xxx"
+	string ParseSceneCode(string message)
+	{
+		Match match = Regex.Match(message, @"^(S\d+)");
+		if (match.Success) return match.Groups[1].Value;
+		match = Regex.Match(message, @"(S\d+)");
+		return match.Success ? match.Groups[1].Value : null;
+	}
 
-    void HandleAct5(string message)
-    {
-        Debug.Log($"[Act5] 收到事件：{message}");
-        // TODO: 第五幕逻辑
-    }
+	string IndexToSceneCode(int sceneCodeInt)
+	{
+		// 现在将传入的整数直接视为场景编号（1..N），不再做 +1 偏移
+		return $"S{sceneCodeInt+1}";
+	}
 }
