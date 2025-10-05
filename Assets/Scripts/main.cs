@@ -65,6 +65,16 @@ public class main : MonoBehaviour
 	[Header("镜头脚本")]
 	public CameraTeleport cameraTeleport;
 
+	[Header("屏幕滤镜")]
+	public ScreenFilterController screenFilter;
+	public Color filterOnEventColor = new Color(0f, 0f, 0f, 0.35f);
+
+	[Header("灰度特效（相机上）")]
+	public ScreenGrayscaleEffect grayscaleEffect;
+	[Range(0f,1f)] public float grayscaleDesaturationOn = 0.85f;
+	[Range(0.5f,2f)] public float grayscaleContrastOn = 1.2f;
+	public float filterFadeDuration = 0.15f;
+
 	// 每幕已完成的按钮与拖拽统计
 	private readonly Dictionary<string, HashSet<string>> clickedButtonsByScene = new Dictionary<string, HashSet<string>>();
 	private readonly Dictionary<string, HashSet<string>> droppedItemsByScene = new Dictionary<string, HashSet<string>>();
@@ -110,6 +120,11 @@ public class main : MonoBehaviour
 		if (string.IsNullOrEmpty(message)) return;
 		string sceneCode = ParseSceneCode(message);
 		if (string.IsNullOrEmpty(sceneCode)) return;
+        Debug.Log("button triggered: " + message);
+		// 事件视觉反馈：按钮点击
+		if (ShouldEnableGrayscale(message)) EnableGrayscale();
+		if (ShouldDisableGrayscale(message)) DisableGrayscale();
+		// // if (screenFilter != null && ShouldEnableOverlay(message)) screenFilter.ApplyOverlay(filterOnEventColor, filterFadeDuration);
 
 		if (!clickedButtonsByScene.ContainsKey(sceneCode))
 		{
@@ -126,6 +141,12 @@ public class main : MonoBehaviour
 		string sceneCode = IndexToSceneCode(sceneIndex);
 		if (string.IsNullOrEmpty(sceneCode)) return;
 		if (string.IsNullOrEmpty(itemName)) return;
+
+		// 事件视觉反馈：物品放置
+        Debug.Log("itemName: " + itemName);
+		if (ShouldEnableGrayscale(itemName)) EnableGrayscale();
+		if (ShouldDisableGrayscale(itemName)) DisableGrayscale();
+		// // if (screenFilter != null && ShouldEnableOverlay(itemName)) screenFilter.ApplyOverlay(filterOnEventColor, filterFadeDuration);
 
 		if (!droppedItemsByScene.ContainsKey(sceneCode))
 		{
@@ -155,9 +176,47 @@ public class main : MonoBehaviour
 			Debug.Log($"[{sceneCode}] 所有条件已满足（按钮 {doneButtons}/{req.requiredButtons}，物品 {doneDrops}/{req.requiredDrops}），触发转场。");
 			if (cameraTeleport != null)
 			{
-                Debug.Log("触发转场");
+				Debug.Log("触发转场");
+				// 场景切换时关闭灰度与覆盖
+				DisableGrayscale();
+				if (screenFilter != null) screenFilter.ClearOverlay(filterFadeDuration);
 				cameraTeleport.StartSceneTransition();
 			}
+		}
+	}
+
+	bool ShouldEnableGrayscale(string eventId)
+	{
+		// 根据需求开启灰度：匹配 S1Item2 或 S2Button3 等
+        Debug.Log("eventId: " + eventId + ' ' + eventId == "S1Item2" || eventId == "S2Button3");
+		return eventId == "S1Item2" || eventId == "S2Button3";
+	}
+
+	bool ShouldDisableGrayscale(string eventId)
+	{
+		// 当 S2Button1 触发或其他自定义事件则关闭
+		return eventId == "S2Button1";
+	}
+
+// 	bool ShouldEnableOverlay(string eventId)
+// 	{
+// 		// 如需与灰度一致的覆盖触发，沿用同一规则；可按需扩展
+// 		return ShouldEnableGrayscale(eventId);
+// 	}
+
+	void EnableGrayscale()
+	{
+		if (grayscaleEffect != null)
+		{
+			grayscaleEffect.SetEnabled(true, grayscaleDesaturationOn, grayscaleContrastOn);
+		}
+	}
+
+	void DisableGrayscale()
+	{
+		if (grayscaleEffect != null)
+		{
+			grayscaleEffect.SetEnabled(false, 0f);
 		}
 	}
 
