@@ -1402,7 +1402,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   desaturation: 0
-  contrast: 1
+  contrast: 1.53
   grayscaleShader: {fileID: 4800000, guid: e3aee300c0831469cbcf3dd1a4113b47, type: 3}
 --- !u!114 &1051703045
 MonoBehaviour:
